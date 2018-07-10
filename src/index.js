@@ -67,4 +67,8 @@ app.on('activate', () => {
 ipcMain.on('go', (event, arg)=>{
   console.log('got go')
   mainWindow.webContents.send('go',arg)
+  if(!mainWindow.isFullScreen()){
+    mainWindow.setFullScreen(true);
+    mainWindow.focus();
+  }
 })
