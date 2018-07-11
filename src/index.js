@@ -15,6 +15,7 @@ const createWindow = () => {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    autoHideMenuBar: true,
   });
   controllerWindow = new BrowserWindow({
     width: 800,

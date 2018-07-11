@@ -1,17 +1,22 @@
 let {ipcRenderer} = require('electron')
 
 // let myWebview = document.getElementById('webview');
-var videoId;
+var globalVideoId;
 
 ipcRenderer.on('go', (event, args)=>{
     console.log('go emitted')
     console.log(args)
     var tempArgs = args.split('v=')
-    videoId = tempArgs[tempArgs.length-1];
-    var tempIndex = videoId.indexOf('&');
-    if(tempIndex != -1) videoId = videoId.substring(0, tempIndex);
-    console.log(videoId);
-    player.videoId = videoId;
+    globalVideoId = tempArgs[tempArgs.length-1];
+    var tempIndex = globalVideoId.indexOf('&');
+    if(tempIndex != -1){
+        globalVideoId = globalVideoId.substring(0, tempIndex);
+    } else {
+        globalVideoId = '9sWEecNUW-o';
+    }
+    console.log(globalVideoId);
+    player.videoId = globalVideoId;
+    player.playVideo();
     fullScreen();
 })
 
@@ -26,20 +31,21 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 //    after the API code downloads.
 var player;
 function onYouTubeIframeAPIReady() {
-player = new YT.Player('player', {
-    height: '360',
-    width: '640',
-    videoId: '9sWEecNUW-o',
-    events: {
-    'onReady': onPlayerReady,
-    'onStateChange': onPlayerStateChange
-    }
-});
+    player = new YT.Player('player', {
+        height: '360',
+        width: '640',
+        videoId: globalVideoId | '9sWEecNUW-o',
+        events: {
+        'onReady': onPlayerReady,
+        'onStateChange': onPlayerStateChange
+        }
+    });
 }
 
 // 4. The API will call this function when the video player is ready.
 function onPlayerReady(event) {
-event.target.playVideo();
+    event.target.playVideo();
+    setTimeout(fullScreen, 1000);
 }
 
 // 5. The API calls this function when the player's state changes.
@@ -49,12 +55,12 @@ var done = false;
 function onPlayerStateChange(event) {
 if (event.data == YT.PlayerState.PLAYING && !done) {
     fullScreen();
-    setTimeout(stopVideo, 6000);
+    // setTimeout(stopVideo, 6000);
     done = true;
 }
 }
 function stopVideo() {
-player.stopVideo();
+    player.stopVideo();
 }
 function fullScreen() {
 var e = document.getElementById("player");
@@ -67,4 +73,5 @@ if (e.requestFullscreen) {
 } else if (e.msRequestFullscreen) {
     e.msRequestFullscreen();
 }
+console.log('fullScreen()')
 }
